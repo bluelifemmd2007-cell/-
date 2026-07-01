@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}سبد خرید{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container">
+    <a href="{{ url_for('index') }}">صفحه اصلی</a>
+    <span>/</span>
+    سبد خرید
+  </div>
+</div>
+
+<section class="cart-page">
+  <div class="container">
+    <h1 class="page-title">🛒 سبد خرید</h1>
+
+    {% if items %}
+    <div class="cart-layout">
+      <div class="cart-items">
+        {% for item in items %}
+        <div class="cart-item">
+          <div class="cart-item-image">
+            <img src="{{ item.product.image }}" alt="{{ item.product.name }}">
+          </div>
+          <div class="cart-item-info">
+            <h3>{{ item.product.name }}</h3>
+            <span class="cart-item-price">{{ format_price(item.product.price) }}</span>
+            <form action="{{ url_for('cart_remove', product_id=item.product.id) }}" method="post" style="margin-top:0.5rem">
+              <button type="submit" class="remove-btn">حذف</button>
+            </form>
+          </div>
+          <form action="{{ url_for('cart_update', product_id=item.product.id) }}" method="post">
+            <div class="qty-controls">
+              <button type="button" class="qty-btn" onclick="updateQty(this, -1)">−</button>
+              <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" class="qty-input" onchange="this.form.submit()">
+              <button type="button" class="qty-btn" onclick="updateQty(this, 1)">+</button>
+            </div>
+          </form>
+          <div class="cart-item-total">{{ format_price(item.line_total) }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="cart-summary">
+        <h3>خلاصه سفارش</h3>
+        <div class="summary-row">
+          <span>جمع کل</span>
+          <span>{{ format_price(total) }}</span>
+        </div>
+        <div class="summary-row">
+          <span>هزینه ارسال</span>
+          <span>{% if total >= 5_000_000 %}رایگان{% else %}{{ format_price(150_000) }}{% endif %}</span>
+        </div>
+        <div class="summary-row total">
+          <span>مبلغ قابل پرداخت</span>
+          <span>{{ format_price(total + (0 if total >= 5_000_000 else 150_000)) }}</span>
+        </div>
+        <button class="btn btn-primary btn-block btn-lg" onclick="alert('درگاه پرداخت به زودی فعال می‌شود.')">تکمیل خرید</button>
+        <a href="{{ url_for('products') }}" class="btn btn-outline btn-block" style="margin-top:0.75rem">ادامه خرید</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-cart">
+      <div class="icon">🛒</div>
+      <h2>سبد خرید شما خالی است</h2>
+      <p>هنوز محصولی به سبد خرید اضافه نکرده‌اید.</p>
+      <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">مشاهده محصولات</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+function updateQty(btn, delta) {
+  const form = btn.closest('form');
+  const input = form.querySelector('.qty-input');
+  input.value = Math.max(1, Math.min(99, parseInt(input.value || 1) + delta));
+  form.submit();
+}
+</script>
+{% endblock %}

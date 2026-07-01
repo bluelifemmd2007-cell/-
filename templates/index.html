@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% from "_product_card.html" import product_card %}
+
+{% block title %}صفحه اصلی{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1>بهترین <span>ابزارآلات</span> برای هر پروژه</h1>
+      <p>از ابزار برقی حرفه‌ای تا تجهیزات باغبانی — با گارانتی معتبر، قیمت مناسب و ارسال سریع به سراسر کشور.</p>
+      <div class="hero-buttons">
+        <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">مشاهده محصولات</a>
+        <a href="{{ url_for('products', category='electric') }}" class="btn btn-outline btn-lg" style="color:#fff;border-color:#fff">ابزار برقی</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">+۵۰۰</div>
+          <div class="stat-label">محصول متنوع</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">+۱۰K</div>
+          <div class="stat-label">مشتری راضی</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">۱۵+</div>
+          <div class="stat-label">سال تجربه</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="https://images.unsplash.com/photo-1581141834561-0ea9000c0289?w=600&h=500&fit=crop" alt="ابزارآلات">
+    </div>
+  </div>
+</section>
+
+<section class="features-bar">
+  <div class="container">
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🚚</div>
+        <div class="feature-text">
+          <h4>ارسال سریع</h4>
+          <p>تحویل ۲۴ تا ۴۸ ساعته</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-text">
+          <h4>گارانتی اصالت</h4>
+          <p>ضمانت بازگشت ۷ روزه</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💳</div>
+        <div class="feature-text">
+          <h4>پرداخت امن</h4>
+          <p>درگاه بانکی معتبر</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📞</div>
+        <div class="feature-text">
+          <h4>پشتیبانی ۲۴/۷</h4>
+          <p>مشاوره رایگان خرید</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>دسته‌بندی محصولات</h2>
+      <p>ابزار مورد نیاز خود را پیدا کنید</p>
+    </div>
+    <div class="categories-grid">
+      {% for cat in CATEGORIES %}
+      <a href="{{ url_for('products', category=cat.id) }}" class="category-card">
+        <div class="cat-icon">{{ cat.icon }}</div>
+        <h3>{{ cat.name }}</h3>
+        <div class="cat-count">{{ category_count(cat.id) }} محصول</div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background: var(--surface)">
+  <div class="container">
+    <div class="section-header">
+      <h2>محصولات پرفروش</h2>
+      <p>محبوب‌ترین ابزارها میان مشتریان ما</p>
+      <a href="{{ url_for('products') }}" class="view-all">مشاهده همه ←</a>
+    </div>
+    <div class="products-grid">
+      {% for product in featured %}
+      {{ product_card(product) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="promo-banner">
+  <div class="container">
+    <div>
+      <h2>تخفیف ویژه ابزار برقی!</h2>
+      <p>تا ۲۰٪ تخفیف روی تمام محصولات برقی — فقط تا پایان هفته</p>
+    </div>
+    <a href="{{ url_for('products', category='electric') }}" class="btn btn-secondary btn-lg">خرید با تخفیف</a>
+  </div>
+</section>
+{% endblock %}

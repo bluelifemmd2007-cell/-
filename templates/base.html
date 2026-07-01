@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ابزار سرا{% endblock %} | فروشگاه ابزارآلات</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="header">
+    <div class="header-main">
+      <div class="container">
+        <a href="{{ url_for('index') }}" class="logo">
+          <span class="logo-icon">🔧</span>
+          <span>ابزار سرا</span>
+        </a>
+        <form class="search-bar" action="{{ url_for('products') }}" method="get">
+          <button type="submit">🔍</button>
+          <input type="search" name="q" placeholder="جستجوی ابزار..." value="{{ search|default('') }}">
+        </form>
+        <div class="header-actions">
+          <a href="{{ url_for('cart') }}" class="header-action">
+            <span class="icon">🛒</span>
+            <span>سبد خرید</span>
+            {% if cart_count() > 0 %}
+            <span class="cart-badge" style="display:flex">{{ cart_count() }}</span>
+            {% else %}
+            <span class="cart-badge">0</span>
+            {% endif %}
+          </a>
+        </div>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="container">
+        <button class="mobile-menu-btn" id="menuBtn" aria-label="منو">☰</button>
+        <div class="nav-links" id="navLinks">
+          <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">صفحه اصلی</a>
+          <a href="{{ url_for('products') }}" class="nav-link {% if request.endpoint == 'products' %}active{% endif %}">محصولات</a>
+          {% for cat in CATEGORIES %}
+          {% if cat.id != 'all' %}
+          <a href="{{ url_for('products', category=cat.id) }}" class="nav-link">{{ cat.name }}</a>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="flash flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo"><span class="logo-icon">🔧</span> ابزارستان</div>
+          <p>فروشگاه تخصصی ابزارآلات صنعتی</p>
+        </div>
+        <div>
+          <h4>دسته‌بندی‌ها</h4>
+          <ul class="footer-links">
+            {% for cat in CATEGORIES %}
+            {% if cat.id != 'all' %}
+            <li><a href="{{ url_for('products', category=cat.id) }}">{{ cat.name }}</a></li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © ۱۴۰۵ ابزارسرا — تمامی حقوق محفوظ است.
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

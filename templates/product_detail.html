@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% from "_product_card.html" import product_card %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container">
+    <a href="{{ url_for('index') }}">صفحه اصلی</a>
+    <span>/</span>
+    <a href="{{ url_for('products') }}">محصولات</a>
+    <span>/</span>
+    {{ product.name }}
+  </div>
+</div>
+
+<section class="product-detail">
+  <div class="container">
+    <div class="product-detail-grid">
+      <div class="product-detail-image">
+        <img src="{{ product.image }}" alt="{{ product.name }}">
+      </div>
+      <div class="product-detail-info">
+        {% if product.badge %}
+        <span class="product-badge" style="position:static;display:inline-block;margin-bottom:0.75rem">{{ product.badge }}</span>
+        {% endif %}
+        <span class="product-category">{{ CATEGORY_MAP.get(product.category, '') }}</span>
+        <h1>{{ product.name }}</h1>
+        <div class="product-rating">
+          <span class="stars">{{ render_stars(product.rating) }}</span>
+          <span class="review-count">{{ product.reviews }} نظر</span>
+        </div>
+        <div class="product-detail-price">
+          <span class="current-price">{{ format_price(product.price) }}</span>
+          {% if product.old_price %}
+          <span class="old-price">{{ format_price(product.old_price) }}</span>
+          {% set discount = discount_percent(product) %}
+          {% if discount %}
+          <span class="discount-tag">{{ discount }}٪ تخفیف</span>
+          {% endif %}
+          {% endif %}
+        </div>
+        <p class="product-description">{{ product.description }}</p>
+
+        <form action="{{ url_for('cart_add', product_id=product.id) }}" method="post">
+          <div class="quantity-selector">
+            <label for="qty">تعداد:</label>
+            <div class="qty-controls">
+              <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+              <input type="number" id="qty" name="quantity" value="1" min="1" max="99" class="qty-input">
+              <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button type="submit" class="btn btn-primary btn-lg">افزودن به سبد خرید</button>
+            <a href="{{ url_for('products', category=product.category) }}" class="btn btn-outline btn-lg">محصولات مشابه</a>
+          </div>
+        </form>
+
+        <div class="product-features">
+          <div class="product-feature">✅ گارانتی ۱۸ ماهه</div>
+          <div class="product-feature">✅ ارسال رایگان</div>
+          <div class="product-feature">✅ ضمانت بازگشت ۷ روزه</div>
+          <div class="product-feature">✅ پشتیبانی فنی</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if related %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>محصولات مرتبط</h2>
+    </div>
+    <div class="products-grid">
+      {% for p in related %}
+      {{ product_card(p) }}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<script>
+function changeQty(delta) {
+  const input = document.getElementById('qty');
+  input.value = Math.max(1, Math.min(99, parseInt(input.value || 1) + delta));
+}
+</script>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_product_card.html" import product_card %}
+
+{% block title %}محصولات{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container">
+    <a href="{{ url_for('index') }}">صفحه اصلی</a>
+    <span>/</span>
+    محصولات
+  </div>
+</div>
+
+<section class="products-page">
+  <div class="container">
+    <div class="products-layout">
+      <aside class="sidebar">
+        <h3>فیلترها</h3>
+        <div class="filter-group">
+          <h4>دسته‌بندی</h4>
+          {% for cat in CATEGORIES %}
+          <a href="{{ url_for('products', category=cat.id, q=search) }}" class="filter-option">
+            <span>{{ cat.icon }} {{ cat.name }}</span>
+            <span>({{ category_count(cat.id) }})</span>
+          </a>
+          {% endfor %}
+        </div>
+      </aside>
+
+      <div>
+        <div class="products-toolbar">
+          <span class="products-count">{{ products|length }} محصول یافت شد</span>
+          <form method="get" style="display:flex;gap:0.5rem">
+            {% if current_category != 'all' %}
+            <input type="hidden" name="category" value="{{ current_category }}">
+            {% endif %}
+            {% if search %}
+            <input type="hidden" name="q" value="{{ search }}">
+            {% endif %}
+            <select name="sort" class="sort-select" onchange="this.form.submit()">
+              <option value="default" {% if sort == 'default' %}selected{% endif %}>مرتب‌سازی پیش‌فرض</option>
+              <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>ارزان‌ترین</option>
+              <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>گران‌ترین</option>
+              <option value="rating" {% if sort == 'rating' %}selected{% endif %}>بیشترین امتیاز</option>
+            </select>
+          </form>
+        </div>
+
+        {% if products %}
+        <div class="products-grid">
+          {% for product in products %}
+          {{ product_card(product) }}
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-cart">
+          <div class="icon">🔍</div>
+          <h2>محصولی یافت نشد</h2>
+          <p>لطفاً فیلتر یا عبارت جستجو را تغییر دهید.</p>
+          <a href="{{ url_for('products') }}" class="btn btn-primary">مشاهده همه محصولات</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
