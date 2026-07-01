@@ -1,0 +1,31 @@
+{% macro product_card(product) %}
+<article class="product-card">
+  {% if product.badge %}
+  <span class="product-badge">{{ product.badge }}</span>
+  {% endif %}
+  <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-image-link">
+    <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy">
+  </a>
+  <div class="product-info">
+    <span class="product-category">{{ CATEGORY_MAP.get(product.category, '') }}</span>
+    <h3><a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a></h3>
+    <div class="product-rating">
+      <span class="stars">{{ render_stars(product.rating) }}</span>
+      <span class="review-count">({{ product.reviews }})</span>
+    </div>
+    <div class="product-price">
+      <span class="current-price">{{ format_price(product.price) }}</span>
+      {% if product.old_price %}
+      <span class="old-price">{{ format_price(product.old_price) }}</span>
+      {% endif %}
+      {% set discount = discount_percent(product) %}
+      {% if discount %}
+      <span class="discount-tag">{{ discount }}٪</span>
+      {% endif %}
+    </div>
+    <form action="{{ url_for('cart_add', product_id=product.id) }}" method="post">
+      <button type="submit" class="btn btn-primary add-to-cart-btn">افزودن به سبد</button>
+    </form>
+  </div>
+</article>
+{% endmacro %}
